@@ -58,7 +58,12 @@ public class UserServlet extends HttpServlet {
                 session.setAttribute("user", user);
                 session.setAttribute("userId", user.getUserId());
                 session.setAttribute("userName", user.getUsername());
-                response.sendRedirect("RestaurantServlet");
+                // Redirect admin to admin dashboard, customers to restaurants
+                if (user.getRole() == User.Role.ADMIN) {
+                    response.sendRedirect("AdminServlet");
+                } else {
+                    response.sendRedirect("RestaurantServlet");
+                }
             } else {
                 request.setAttribute("error", "Invalid email or password");
                 RequestDispatcher dispatcher = request.getRequestDispatcher("/login.jsp");
