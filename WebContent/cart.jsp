@@ -4,397 +4,296 @@
 <%@ page import="com.dcl.model.CartItem" %>
 <%@ page import="com.dcl.model.User" %>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Shopping Cart - Food Delivery</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart — BITE</title>
+    <link rel="stylesheet" href="css/impossible.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        .cart-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-top: 40px;
+        }
+        @media (max-width: 900px) { .cart-layout { grid-template-columns: 1fr; } }
+        
+        .cart-items-panel, .cart-summary {
+            background-color: var(--color-burgundy-stage);
+            border: 1px solid var(--color-butcher-black);
+            border-radius: var(--radius-cards);
         }
         
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-        }
-        
-        .navbar {
-            background-color: #fff;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            padding: 15px 20px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
+        .panel-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--color-butcher-black);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        
-        .navbar h1 {
-            color: #ff6b6b;
-            font-size: 24px;
+        .panel-title {
+            font-family: var(--font-sans-meat);
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--color-bone-white);
+            text-transform: uppercase;
         }
-        
-        .nav-links a {
-            color: #333;
-            text-decoration: none;
-            margin-left: 20px;
-        }
-        
-        .nav-links a:hover {
-            color: #ff6b6b;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-        
-        .back-button {
-            background-color: #ff6b6b;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-bottom: 20px;
-            text-decoration: none;
-            display: inline-block;
-        }
-        
-        .back-button:hover {
-            background-color: #ff5252;
-        }
-        
-        h2 {
-            margin-bottom: 30px;
-            color: #333;
-        }
-        
-        .cart-container {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
-        }
-        
-        .cart-items {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        .panel-count {
+            font-family: var(--font-sans-meat);
+            font-size: 14px;
+            color: var(--color-blush-highlight);
+            text-transform: uppercase;
         }
         
         .cart-item {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 15px;
-            border-bottom: 1px solid #eee;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--color-butcher-black);
+            gap: 16px;
         }
+        .cart-item:last-child { border-bottom: none; }
         
-        .cart-item:last-child {
-            border-bottom: none;
-        }
-        
-        .item-details {
-            flex: 1;
-        }
-        
-        .item-name {
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 5px;
-        }
-        
-        .item-price {
-            font-size: 14px;
-            color: #999;
-        }
-        
-        .item-quantity {
+        .item-icon {
+            width: 48px;
+            height: 48px;
+            background-color: var(--color-velvet-wine);
+            border: 1px solid var(--color-butcher-black);
+            border-radius: 4px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin: 0 20px;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .item-details { flex: 1; }
+        .item-name {
+            font-family: var(--font-sans-meat);
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--color-bone-white);
+            text-transform: uppercase;
+        }
+        .item-unit-price {
+            font-size: 14px;
+            color: var(--color-blush-highlight);
         }
         
         .quantity-controls {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin: 0 20px;
+            background-color: var(--color-velvet-wine);
+            border: 1px solid var(--color-butcher-black);
+            border-radius: var(--radius-buttons);
+            overflow: hidden;
         }
-        
-        .quantity-controls form {
-            margin: 0;
-        }
-        
-        .quantity-controls p {
-            margin: 0;
-            font-size: 16px;
-            font-weight: bold;
-            min-width: 30px;
-            text-align: center;
-        }
-        
-        .quantity-btn {
-            background-color: #ff6b6b;
-            color: white;
+        .qty-btn {
+            background: transparent;
+            color: var(--color-bone-white);
             border: none;
-            width: 30px;
-            height: 30px;
-            border-radius: 5px;
+            width: 32px;
+            height: 32px;
+            font-weight: 700;
+            font-family: var(--font-sans-meat);
             cursor: pointer;
-            font-size: 18px;
         }
-        
-        .quantity-btn:hover {
-            background-color: #ff5252;
-        }
-        
-        .quantity-display {
+        .qty-btn:hover { background-color: var(--color-impossible-red); }
+        .qty-display {
+            font-family: var(--font-sans-meat);
+            font-weight: 700;
             font-size: 16px;
-            font-weight: bold;
-            min-width: 30px;
+            color: var(--color-bone-white);
+            width: 32px;
             text-align: center;
         }
         
         .item-total {
-            font-size: 18px;
-            font-weight: bold;
-            color: #ff6b6b;
+            font-family: var(--font-sans-meat);
+            font-weight: 700;
+            font-size: 22px;
+            color: var(--color-impossible-red);
             min-width: 80px;
             text-align: right;
         }
         
-        .remove-btn {
-            background-color: #e74c3c;
-            color: white;
+        .btn-remove {
+            background: transparent;
+            color: var(--color-blush-highlight);
             border: none;
-            padding: 8px 16px;
-            border-radius: 5px;
             cursor: pointer;
-            margin-left: 10px;
+            font-size: 18px;
+            width: 32px;
+            height: 32px;
         }
-        
-        .remove-btn:hover {
-            background-color: #c0392b;
-        }
+        .btn-remove:hover { color: var(--color-impossible-red); }
         
         .cart-summary {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 24px;
             height: fit-content;
-            position: sticky;
-            top: 100px;
         }
-        
         .summary-title {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #333;
+            font-family: var(--font-sans-meat);
+            font-weight: 700;
+            font-size: 24px;
+            color: var(--color-bone-white);
+            text-transform: uppercase;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--color-butcher-black);
+            padding-bottom: 12px;
         }
-        
         .summary-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 15px;
-            color: #666;
+            margin-bottom: 16px;
+            font-size: 16px;
+            color: var(--color-blush-highlight);
         }
-        
+        .summary-row span:last-child { color: var(--color-bone-white); }
+        .summary-divider {
+            border: none;
+            border-top: 1px solid var(--color-butcher-black);
+            margin: 16px 0;
+        }
         .summary-total {
             display: flex;
             justify-content: space-between;
-            padding-top: 15px;
-            border-top: 2px solid #eee;
-            margin-top: 15px;
+            align-items: center;
+        }
+        .summary-total-label {
+            font-family: var(--font-sans-meat);
+            font-weight: 700;
             font-size: 20px;
-            font-weight: bold;
-            color: #333;
+            color: var(--color-bone-white);
+            text-transform: uppercase;
+        }
+        .summary-total-value {
+            font-family: var(--font-sans-meat);
+            font-weight: 700;
+            font-size: 32px;
+            color: var(--color-impossible-red);
         }
         
-        .checkout-btn {
-            width: 100%;
-            background-color: #ff6b6b;
-            color: white;
-            border: none;
-            padding: 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: 20px;
-        }
-        
-        .checkout-btn:hover {
-            background-color: #ff5252;
-        }
-        
-        .empty-cart {
-            text-align: center;
-            padding: 60px 20px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        
-        .empty-cart-icon {
-            font-size: 64px;
-            margin-bottom: 20px;
-        }
-        
-        .empty-cart h3 {
-            color: #666;
-            margin-bottom: 20px;
-        }
-        
-        @media (max-width: 768px) {
-            .cart-container {
-                grid-template-columns: 1fr;
-            }
-            
-            .cart-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-            
-            .item-quantity {
-                margin: 10px 0;
-            }
-        }
+        .empty-icon { font-size: 80px; display: block; text-align: center; margin-bottom: 24px; opacity: 0.5; }
     </style>
 </head>
 <body>
-    <div class="navbar">
-        <h1>🍕 Food Delivery App</h1>
-        <div class="nav-links" style="display: flex; align-items: center;">
-            <a href="index.jsp">Home</a>
-            <a href="RestaurantServlet">Restaurants</a>
-             <a href="CartServlet" style="margin-right: 20px;">🛒 View Cart</a>
-             <% 
-                 User currentUser = (User) session.getAttribute("user");
-                 if (currentUser != null) {
-             %>
-                 <span style="margin-right: 20px; font-weight: bold; color: #333;">Welcome, <%= currentUser.getUsername() %>!</span>
-                 <a href="OrderHistoryServlet" style="margin-right: 20px;">📋 My Orders</a>
-                 <a href="UserServlet?action=logout" style="color: #c33; text-decoration: none; border: 1px solid #c33; padding: 4px 8px; border-radius: 4px; margin-left: 0;">Logout</a>
+
+    <nav class="navbar">
+        <a href="index.jsp" class="nav-logo">BITE</a>
+        <div class="nav-links">
+            <a href="index.jsp" class="nav-item">Home</a>
+            <a href="RestaurantServlet" class="nav-item">Restaurants</a>
+            <a href="CartServlet" class="nav-item">🛒 Cart</a>
+            <%
+                User currentUser = (User) session.getAttribute("user");
+                if (currentUser != null) {
+            %>
+                <span class="nav-welcome">Hey, <%= currentUser.getUsername() %></span>
+                <a href="OrderHistoryServlet" class="nav-item">My Orders</a>
+                <a href="UserServlet?action=logout" class="btn-primary">Logout ›</a>
             <% } else { %>
-                <a href="login.jsp" style="color: #333; text-decoration: none; border: 1px solid #333; padding: 4px 8px; border-radius: 4px; margin-left: 0;">Login / Register</a>
+                <a href="login.jsp" class="btn-primary">Sign In ›</a>
             <% } %>
         </div>
+    </nav>
+
+    <div class="section-heading-block" style="padding-bottom: 0;">
+        <a href="RestaurantServlet" class="nav-welcome" style="margin-bottom: 24px; display: inline-block;">← CONTINUE SHOPPING</a>
+        <p class="section-bracket-eyebrow">◂ Your Selection ▸</p>
+        <h1 class="section-display" style="margin-bottom: 0;">YOUR CART</h1>
     </div>
-    
-    <div class="container">
-        <a href="RestaurantServlet" class="back-button">← Continue Shopping</a>
-        
-        <h2>Shopping Cart</h2>
-        
+
+    <div style="max-width: 1280px; margin: 0 auto; padding: 0 24px 80px; width: 100%;">
         <%
             Cart cart = (Cart) request.getAttribute("cart");
-            Integer restaurantId = (Integer) request.getAttribute("restaurantId");
-            
+
             if (cart == null || cart.isEmpty()) {
         %>
-            <div class="empty-cart">
-                <div class="empty-cart-icon">🛒</div>
-                <h3>Your cart is empty</h3>
-                <p style="color: #999; margin-bottom: 20px;">Add some delicious items to get started!</p>
-                <a href="RestaurantServlet" class="back-button">Browse Restaurants</a>
-            </div>
+        <div class="text-center" style="margin-top: 80px;">
+            <span class="empty-icon">🛒</span>
+            <h1 class="form-title" style="margin-bottom: 16px;">CART'S EMPTY</h1>
+            <p style="color: var(--color-blush-highlight); margin-bottom: 32px;">Add some delicious items to get started!</p>
+            <a href="RestaurantServlet" class="btn-primary" style="font-size: 16px; padding: 14px 28px;">Browse Restaurants ›</a>
+        </div>
         <%
             } else {
                 List<CartItem> items = cart.getItems();
                 double cartTotal = cart.getCartTotal();
         %>
-            <div class="cart-container">
-                <div class="cart-items">
-                    <%
-                        for (CartItem item : items) {
-                    %>
-                    <div class="cart-item">
-                        <div class="item-details">
-                            <div class="item-name"><%= item.getItemName() %></div>
-                            <div class="item-price">₹<%= String.format("%.0f", item.getItemPrice()) %> per item</div>
-                        </div>
-                        
-                        <div class="quantity-controls">
-                            <form action="CartServlet" method="post" style="display: inline;">
-                                <input type="hidden" name="itemId" value="<%= item.getCartItemId() %>">
-                                <input type="hidden" name="action" value="update">
-                                <input type="hidden" name="quantity" value="<%= item.getQuantity() + 1 %>">
-                                <button class="quantity-btn">+</button>
-                            </form>
-                            <p><%= item.getQuantity() %></p>
-                            <form action="CartServlet" method="post" style="display: inline;">
-                                <input type="hidden" name="itemId" value="<%= item.getCartItemId() %>">
-                                <input type="hidden" name="action" value="update">
-                                <input type="hidden" name="quantity" value="<%= item.getQuantity() - 1 %>">
-                                <button class="quantity-btn" <% if (item.getQuantity() == 1) { %>disabled<% } %>>−</button>
-                            </form>
-                        </div>
-                        
-                        <div class="item-total">₹<%= String.format("%.0f", item.getItemTotal()) %></div>
-                        
-                        <form action="CartServlet" method="post" style="display: inline; margin: 0;">
-                            <input type="hidden" name="action" value="remove">
-                            <input type="hidden" name="productId" value="<%= item.getProductId() %>">
-                            <button type="submit" class="remove-btn">Remove</button>
+        <div class="cart-layout">
+            <div class="cart-items-panel">
+                <div class="panel-header">
+                    <span class="panel-title">Items</span>
+                    <span class="panel-count"><%= items.size() %> item<%= items.size() != 1 ? "s" : "" %></span>
+                </div>
+                <% for (CartItem item : items) { %>
+                <div class="cart-item">
+                    <div class="item-icon">🍽️</div>
+                    <div class="item-details">
+                        <div class="item-name"><%= item.getItemName() %></div>
+                        <div class="item-unit-price">₹<%= String.format("%.0f", item.getItemPrice()) %> per item</div>
+                    </div>
+                    
+                    <div class="quantity-controls">
+                        <form action="CartServlet" method="post" style="margin: 0; display: inline;">
+                            <input type="hidden" name="itemId" value="<%= item.getCartItemId() %>">
+                            <input type="hidden" name="action" value="update">
+                            <input type="hidden" name="quantity" value="<%= item.getQuantity() - 1 %>">
+                            <button class="qty-btn" type="submit" <%= item.getQuantity() == 1 ? "disabled" : "" %>>−</button>
+                        </form>
+                        <span class="qty-display"><%= item.getQuantity() %></span>
+                        <form action="CartServlet" method="post" style="margin: 0; display: inline;">
+                            <input type="hidden" name="itemId" value="<%= item.getCartItemId() %>">
+                            <input type="hidden" name="action" value="update">
+                            <input type="hidden" name="quantity" value="<%= item.getQuantity() + 1 %>">
+                            <button class="qty-btn" type="submit">+</button>
                         </form>
                     </div>
-                    <%
-                        }
-                    %>
-                </div>
-                
-                <div class="cart-summary">
-                    <div class="summary-title">Order Summary</div>
-                    
-                    <div class="summary-row">
-                        <span>Items (<%= items.size() %>)</span>
-                        <span>₹<%= String.format("%.0f", cartTotal) %></span>
-                    </div>
-                    
-                    <div class="summary-row">
-                        <span>Delivery Fee</span>
-                        <span>₹40</span>
-                    </div>
-                    
-                    <div class="summary-row">
-                        <span>GST (5%)</span>
-                        <span>₹<%= String.format("%.0f", cartTotal * 0.05) %></span>
-                    </div>
-                    
-                    <div class="summary-total">
-                        <span>Total Amount</span>
-                        <span>₹<%= String.format("%.0f", cartTotal + 40 + (cartTotal * 0.05)) %></span>
-                    </div>
-                    
-                    <form action="checkout" method="get">
-                        <button type="submit" class="checkout-btn">Proceed to Checkout</button>
+
+                    <div class="item-total">₹<%= String.format("%.0f", item.getItemTotal()) %></div>
+
+                    <form action="CartServlet" method="post" style="margin: 0; display: inline;" onsubmit="return confirm('Remove this item?')">
+                        <input type="hidden" name="action" value="remove">
+                        <input type="hidden" name="productId" value="<%= item.getProductId() %>">
+                        <button type="submit" class="btn-remove">✕</button>
                     </form>
                 </div>
+                <% } %>
             </div>
-        <%
-            }
-        %>
+
+            <div class="cart-summary">
+                <div class="summary-title">Order Summary</div>
+                <div class="summary-row">
+                    <span>Items (<%= items.size() %>)</span>
+                    <span>₹<%= String.format("%.0f", cartTotal) %></span>
+                </div>
+                <div class="summary-row">
+                    <span>Delivery Fee</span>
+                    <span>₹40</span>
+                </div>
+                <div class="summary-row">
+                    <span>GST (5%)</span>
+                    <span>₹<%= String.format("%.0f", cartTotal * 0.05) %></span>
+                </div>
+                <hr class="summary-divider">
+                <div class="summary-total">
+                    <span class="summary-total-label">Total</span>
+                    <span class="summary-total-value">₹<%= String.format("%.0f", cartTotal + 40 + (cartTotal * 0.05)) %></span>
+                </div>
+                <form action="checkout" method="get" style="margin-top: 32px;">
+                    <button type="submit" class="btn-primary" style="width: 100%; font-size: 16px; padding: 14px 24px;">PROCEED TO CHECKOUT ›</button>
+                </form>
+            </div>
+        </div>
+        <% } %>
     </div>
-    
-    <script>
-        // Remove confirmation
-        document.querySelectorAll('.remove-btn').forEach(btn => {
-            btn.parentElement.addEventListener('submit', function(e) {
-                if (!confirm('Are you sure you want to remove this item?')) {
-                    e.preventDefault();
-                }
-            });
-        });
-    </script>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-logo">BITE</div>
+        <p class="footer-text">© 2025 BITE FOOD DELIVERY. ALL RIGHTS RESERVED.</p>
+    </footer>
+
 </body>
 </html>

@@ -5,261 +5,159 @@
 <%@ page import="com.dcl.model.Restaurant" %>
 <%@ page import="com.dcl.utility.CartHelper" %>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Restaurant Menu - Food Delivery</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu — BITE</title>
+    <link rel="stylesheet" href="css/impossible.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        .cart-link { position: relative; display: inline-flex; align-items: center; }
+        .cart-badge {
+            position: absolute; top: -8px; right: -12px;
+            background-color: var(--color-impossible-red);
+            color: var(--color-bone-white);
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 10px;
+            font-family: var(--font-sans-meat);
+            font-weight: 700;
         }
-        
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
+        .menu-image-wrapper {
+            width: 100%; height: 200px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--color-butcher-black);
+            margin: -24px -24px 16px -24px;
+            width: calc(100% + 48px);
         }
-        
-        .navbar {
-            background-color: #fff;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            padding: 15px 20px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
+        .menu-image-wrapper img {
+            width: 100%; height: 100%; object-fit: cover;
         }
-        
-        .navbar h1 {
-            color: #ff6b6b;
-            font-size: 24px;
+        .price-row {
+            display: flex; justify-content: space-between; align-items: center; margin-top: 16px;
         }
-        
-        .container {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 0 20px;
+        .price-text {
+            font-family: var(--font-sans-meat); font-weight: 700; font-size: 24px; color: var(--color-impossible-red);
         }
-        
-        .back-button {
-            background-color: #ff6b6b;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-bottom: 20px;
-            text-decoration: none;
-            display: inline-block;
-        }
-        
-        .back-button:hover {
-            background-color: #ff5252;
-        }
-        
-        h2 {
-            margin-bottom: 30px;
-            color: #333;
-        }
-        
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
-        
-        .menu-item {
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
-        }
-        
-        .menu-item:hover {
-            transform: translateY(-2px);
-        }
-        
-        .menu-image {
-            width: 100%;
-            height: 200px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 14px;
-        }
-        
-        .menu-info {
-            padding: 15px;
-        }
-        
-        .menu-title {
-            font-size: 18px;
-            margin-bottom: 8px;
-            color: #333;
-        }
-        
-        .menu-description {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 15px;
-            line-height: 1.4;
-        }
-        
-        .menu-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 1px solid #eee;
-            padding-top: 15px;
-        }
-        
-        .menu-price {
-            font-size: 20px;
-            font-weight: bold;
-            color: #ff6b6b;
-        }
-        
-        .add-to-cart {
-            background-color: #ff6b6b;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        
-        .add-to-cart:hover {
-            background-color: #ff5252;
-        }
-        
-        .no-menu {
+        .cart-toast {
+            background-color: var(--color-impossible-red);
+            color: var(--color-bone-white);
+            padding: 12px 24px;
+            margin: 16px auto;
+            max-width: 1280px;
             text-align: center;
-            padding: 40px;
-            color: #666;
-        }
-        
-        .restaurant-info {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            font-family: var(--font-sans-meat);
+            font-weight: 700;
+            text-transform: uppercase;
         }
     </style>
 </head>
 <body>
-    <div class="navbar">
-        <h1>🍕 Food Delivery App</h1>
-        <div style="display: flex; align-items: center;">
-            <a href="index.jsp" style="color: #333; text-decoration: none; margin-right: 20px;">Home</a>
-            <a href="RestaurantServlet" style="color: #333; text-decoration: none; margin-right: 20px;">Restaurants</a>
-            <% 
+
+    <nav class="navbar">
+        <a href="index.jsp" class="nav-logo">BITE</a>
+        <div class="nav-links">
+            <a href="index.jsp" class="nav-item">Home</a>
+            <a href="RestaurantServlet" class="nav-item">Restaurants</a>
+            <%
                 User currentUser = (User) session.getAttribute("user");
                 if (currentUser != null) {
             %>
-                <span style="margin-right: 20px; font-weight: bold;">Welcome, <%= currentUser.getUsername() %>!</span>
-                <a href="OrderHistoryServlet" style="color: #333; text-decoration: none; margin-right: 20px;">📋 My Orders</a>
-                <a href="CartServlet" style="color: #333; text-decoration: none; position: relative; margin-right: 20px;">
-                    🛒 View Cart
+                <span class="nav-welcome">Hey, <%= currentUser.getUsername() %></span>
+                <a href="OrderHistoryServlet" class="nav-item">My Orders</a>
+                <a href="CartServlet" class="nav-item cart-link">
+                    Cart
                     <%
                         int cartCount = CartHelper.getCartItemCount(session);
                         if (cartCount > 0) {
                     %>
-                        <span style="position: absolute; top: -8px; right: -10px; background: #ff6b6b; color: white; border-radius: 50%; padding: 2px 6px; font-size: 12px;"><%= cartCount %></span>
-                    <%
-                        }
-                    %>
+                        <span class="cart-badge"><%= cartCount %></span>
+                    <% } %>
                 </a>
-                <a href="UserServlet?action=logout" style="color: #c33; text-decoration: none; border: 1px solid #c33; padding: 4px 8px; border-radius: 4px;">Logout</a>
+                <a href="UserServlet?action=logout" class="btn-primary">Logout ›</a>
             <% } else { %>
-                <a href="login.jsp" style="color: #333; text-decoration: none; border: 1px solid #333; padding: 4px 8px; border-radius: 4px;">Login / Register</a>
+                <a href="login.jsp" class="btn-primary">Sign In ›</a>
             <% } %>
         </div>
+    </nav>
+
+    <%
+        Restaurant restaurant = (Restaurant) request.getAttribute("restaurant");
+        String restaurantName = (restaurant != null) ? restaurant.getName() : "RESTAURANT MENU";
+        String cuisineType = (restaurant != null) ? restaurant.getCuisineType() : "";
+    %>
+
+    <div class="section-heading-block" style="padding-bottom: 0;">
+        <a href="RestaurantServlet" class="nav-welcome" style="margin-bottom: 24px; display: inline-block;">← BACK TO RESTAURANTS</a>
+        <p class="section-bracket-eyebrow">◂ The Menu ▸</p>
+        <h1 class="section-display" style="margin-bottom: 16px;"><%= restaurantName %></h1>
+        <p class="hero-aside" style="font-size: 32px;"><%= cuisineType.toUpperCase() %> CUISINE</p>
     </div>
-    
-    <div class="container">
-        <a href="RestaurantServlet" class="back-button">← Back to Restaurants</a>
-        
-        <%
-            String cartMessage = (String) session.getAttribute("cartMessage");
-            if (cartMessage != null) {
-                session.removeAttribute("cartMessage");
-        %>
-            <div style="background-color: #d4edda; color: #155724; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #c3e6cb;">
-                ✓ <%= cartMessage %>
-            </div>
-        <%
-            }
-        %>
-        
-        <div class="restaurant-info">
-            <%
-                Restaurant restaurant = (Restaurant) request.getAttribute("restaurant");
-                String restaurantName = (restaurant != null) ? restaurant.getName() : "Restaurant Menu";
-                String cuisineType = (restaurant != null) ? restaurant.getCuisineType() : "";
-            %>
-            <h2><%= restaurantName %></h2>
-            <% if (!cuisineType.isEmpty()) { %>
-            <p><%= cuisineType %> Cuisine &nbsp;|&nbsp; ⭐ <%= (restaurant != null) ? String.format("%.1f", restaurant.getRating()) : "" %> &nbsp;|&nbsp; 🕒 <%= (restaurant != null) ? restaurant.getDeliveryTime() : 30 %> min delivery</p>
-            <% } else { %>
-            <p>Choose from our delicious menu items</p>
-            <% } %></div>
-        
+
+    <%
+        String cartMessage = (String) session.getAttribute("cartMessage");
+        if (cartMessage != null) {
+            session.removeAttribute("cartMessage");
+    %>
+        <div class="cart-toast">✓ <%= cartMessage %></div>
+    <% } %>
+
+    <div class="card-grid">
         <%
             @SuppressWarnings("unchecked")
             List<Menu> menus = (List<Menu>) request.getAttribute("menus");
-            
+
             if (menus == null || menus.isEmpty()) {
         %>
-            <div class="no-menu">
-                <p>No menu items available for this restaurant.</p>
+            <div class="text-center" style="grid-column: 1 / -1; margin-top: 40px;">
+                <h3 class="card-title">NO MENU ITEMS AVAILABLE</h3>
             </div>
         <%
             } else {
-        %>
-            <div class="menu-grid">
-        <%
                 for (Menu menu : menus) {
+                    String resolvedDishImage = menu.getImageUrl();
+                    if (resolvedDishImage == null || resolvedDishImage.trim().isEmpty()) {
+                        int index = menu.getMenuId() % 6;
+                        if (index == 0) resolvedDishImage = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80";
+                        else if (index == 1) resolvedDishImage = "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=600&q=80";
+                        else if (index == 2) resolvedDishImage = "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=600&q=80";
+                        else if (index == 3) resolvedDishImage = "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&q=80";
+                        else if (index == 4) resolvedDishImage = "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=600&q=80";
+                        else resolvedDishImage = "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80";
+                    }
         %>
-                <div class="menu-item">
-                    <div class="menu-image">
-                        <% if (menu.getImageUrl() != null && !menu.getImageUrl().isEmpty()) { %>
-                            <img src="<%= menu.getImageUrl() %>" alt="<%= menu.getName() %>" 
-                                 style="width: 100%; height: 100%; object-fit: cover;">
-                        <% } else { %>
-                            Dish Image
-                        <% } %>
-                    </div>
-                    <div class="menu-info">
-                        <div class="menu-title"><%= menu.getName() %></div>
-                        <div class="menu-description"><%= menu.getDescription() %></div>
-                        <div class="menu-footer">
-                            <span class="menu-price">₹<%= String.format("%.0f", menu.getPrice()) %></span>
-                            <% if (menu.isAvailable()) { %>
-                                <form action="CartServlet" method="post" style="margin: 0;">
-                                    <input type="hidden" name="action" value="add">
-                                    <input type="hidden" name="menuId" value="<%= menu.getMenuId() %>">
-                                    <input type="hidden" name="restaurantId" value="<%= request.getAttribute("restaurantId") %>">
-                                    <input type="hidden" name="referer" value="MenuServlet?restaurantId=<%= request.getAttribute("restaurantId") %>">
-                                    <button type="submit" class="add-to-cart">Add to Cart</button>
-                                </form>
-                            <% } else { %>
-                                <span style="color: #999;">Not Available</span>
-                            <% } %>
-                        </div>
-                    </div>
+            <div class="card">
+                <div class="menu-image-wrapper">
+                    <img src="<%= resolvedDishImage %>" alt="<%= menu.getName() %>">
                 </div>
-        <%
-                }
-        %>
+                <div class="card-title"><%= menu.getName() %></div>
+                <div class="card-desc"><%= menu.getDescription() %></div>
+                <div class="price-row">
+                    <span class="price-text">₹<%= String.format("%.0f", menu.getPrice()) %></span>
+                    <% if (menu.isAvailable()) { %>
+                        <form action="CartServlet" method="post" style="margin: 0;">
+                            <input type="hidden" name="action" value="add">
+                            <input type="hidden" name="menuId" value="<%= menu.getMenuId() %>">
+                            <input type="hidden" name="restaurantId" value="<%= request.getAttribute("restaurantId") %>">
+                            <input type="hidden" name="referer" value="MenuServlet?restaurantId=<%= request.getAttribute("restaurantId") %>">
+                            <button type="submit" class="btn-primary">ADD TO CART ›</button>
+                        </form>
+                    <% } else { %>
+                        <span class="btn-ghost" style="border-color: rgba(255,255,255,0.3); color: rgba(255,255,255,0.3);">UNAVAILABLE</span>
+                    <% } %>
+                </div>
             </div>
         <%
+                }
             }
         %>
     </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-logo">BITE</div>
+        <p class="footer-text">© 2025 BITE FOOD DELIVERY. ALL RIGHTS RESERVED.</p>
+    </footer>
+
 </body>
 </html>

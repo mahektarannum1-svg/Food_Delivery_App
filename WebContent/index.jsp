@@ -1,169 +1,127 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Home - Food Delivery App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BITE — Food Delivery, Reimagined</title>
+    <link rel="stylesheet" href="css/impossible.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        /* Specific overrides for index page masked images */
+        .hero-masked-img {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            object-fit: cover;
+            /* Irregular organic shapes */
+            clip-path: polygon(15% 0%, 85% 5%, 100% 45%, 85% 95%, 20% 100%, 0% 50%);
+            z-index: 1;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s, box-shadow 0.6s;
+            filter: grayscale(20%) contrast(120%);
         }
-        
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
+        .hero-masked-img:hover {
+            transform: scale(1.1) rotate(0deg) !important;
+            filter: grayscale(0%) contrast(130%);
+            z-index: 10;
         }
-        
-        .navbar {
-            background-color: #fff;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .hero-masked-1 {
+            top: 10%;
+            left: 5%;
+            transform: rotate(-10deg);
         }
-        
-        .navbar h1 {
-            color: #ff6b6b;
-            font-size: 24px;
+        .hero-masked-2 {
+            bottom: 10%;
+            right: 5%;
+            clip-path: polygon(0% 15%, 85% 0%, 100% 60%, 75% 100%, 10% 85%);
+            transform: rotate(5deg);
         }
-        
-        .navbar a {
-            color: #333;
-            text-decoration: none;
-            margin: 0 15px;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-        
-        .navbar a:hover {
-            color: #ff6b6b;
-        }
-        
-        .hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 100px 20px;
-            text-align: center;
-        }
-        
-        .hero h1 {
-            font-size: 48px;
-            margin-bottom: 10px;
-        }
-        
-        .hero p {
-            font-size: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .btn {
-            background-color: #ff6b6b;
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            font-size: 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        
-        .btn:hover {
-            background-color: #ff5252;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-        
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-            margin-bottom: 60px;
-        }
-        
-        .feature-card {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        
-        .feature-icon {
-            font-size: 48px;
-            margin-bottom: 15px;
-        }
-        
-        .feature-card h3 {
-            margin-bottom: 10px;
-            color: #333;
-        }
-        
-        .feature-card p {
-            color: #666;
-            font-size: 14px;
+        .hero-content {
+            position: relative;
+            z-index: 2;
         }
     </style>
 </head>
 <body>
-    <div class="navbar">
-        <h1>🍕 Food Delivery App</h1>
-        <div>
-            <a href="index.jsp">Home</a>
-            <a href="RestaurantServlet">Restaurants</a>
-             <%
-                 com.dcl.model.User currentUser = (com.dcl.model.User) session.getAttribute("user");
-                 if (currentUser != null) {
-             %>
-                 <span style="font-weight: 500; color: #666; margin-left: 15px;">Welcome, <%= currentUser.getUsername() %></span>
-                 <a href="OrderHistoryServlet">📋 My Orders</a>
-                 <a href="UserServlet?action=logout">Logout</a>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="index.jsp" class="nav-logo">BITE</a>
+        <div class="nav-links">
+            <a href="index.jsp" class="nav-item">Home</a>
+            <a href="RestaurantServlet" class="nav-item">Restaurants</a>
+            <%
+                com.dcl.model.User currentUser = (com.dcl.model.User) session.getAttribute("user");
+                if (currentUser != null) {
+            %>
+                <span class="nav-welcome">Hey, <%= currentUser.getUsername() %></span>
+                <a href="OrderHistoryServlet" class="nav-item">My Orders</a>
+                <a href="UserServlet?action=logout" class="btn-primary">Logout ›</a>
             <%
                 } else {
             %>
-                <a href="login.jsp">Login</a>
+                <a href="login.jsp" class="btn-primary">Sign In ›</a>
             <%
                 }
             %>
         </div>
-    </div>
-    
-    <div class="hero">
-        <h1>Order Food Online</h1>
-        <p>Fast delivery to your doorstep</p>
-        <button class="btn" onclick="window.location.href='RestaurantServlet'">Browse Restaurants</button>
-    </div>
-    
-    <div class="container">
-        <h2 style="margin-bottom: 30px; color: #333;">Why Choose Us?</h2>
-        <div class="features">
-            <div class="feature-card">
-                <div class="feature-icon">🚀</div>
-                <h3>Fast Delivery</h3>
-                <p>Get your food delivered in 30 minutes</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">⭐</div>
-                <h3>Quality Food</h3>
-                <p>Fresh and hygienic food from best restaurants</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">💰</div>
-                <h3>Great Prices</h3>
-                <p>Affordable prices with special discounts</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🛡️</div>
-                <h3>Safe Payment</h3>
-                <p>Secure payment options available</p>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="hero-section">
+        <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=800&auto=format&fit=crop" class="hero-masked-img hero-masked-1" alt="Burger">
+        <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=800&auto=format&fit=crop" class="hero-masked-img hero-masked-2" alt="Fries">
+        
+        <div class="hero-content">
+            <p class="hero-eyebrow">◂ Hot & Ready In 30 Min ▸</p>
+            <h1 class="hero-display">ORDER<br>FOOD</h1>
+            <h2 class="hero-aside">(FROM REAL RESTAURANTS)</h2>
+            <div class="pill-group" style="margin-top: 16px;">
+                <a href="RestaurantServlet" class="btn-primary">Browse Restaurants ›</a>
+                <% if (currentUser == null) { %>
+                <a href="register.jsp" class="btn-ghost">Create Account</a>
+                <% } %>
             </div>
         </div>
-    </div>
+    </section>
+
+    <!-- SECTION 2: WHY CHOOSE US -->
+    <section class="section-heading-block interactive-section" style="background-color: var(--color-burgundy-stage); border-top: 1px solid var(--color-butcher-black); border-bottom: 1px solid var(--color-butcher-black); transition: background-color 0.4s;">
+        <p class="section-bracket-eyebrow">◂ Why Choose Us ▸</p>
+        <h2 class="section-display">THE<br>DIFFERENCE</h2>
+    </section>
+    
+    <style>
+        .interactive-section:hover {
+            background-color: #5c0529 !important;
+            box-shadow: inset 0 0 40px rgba(225,6,0,0.1);
+        }
+    </style>
+
+    <!-- FEATURES GRID -->
+    <section class="card-grid">
+        <div class="card">
+            <h3 class="card-title">Fast Delivery</h3>
+            <p class="card-desc">Your food arrives in 30 minutes or we'll make it right — every single time.</p>
+        </div>
+        <div class="card">
+            <h3 class="card-title">Quality Food</h3>
+            <p class="card-desc">Fresh, hygienic dishes from the best curated restaurants in your city.</p>
+        </div>
+        <div class="card">
+            <h3 class="card-title">Great Prices</h3>
+            <p class="card-desc">Everyday affordable prices with special deals. No surprise fees, ever.</p>
+        </div>
+        <div class="card">
+            <h3 class="card-title">Safe Payment</h3>
+            <p class="card-desc">Multiple secure payment options — UPI, cards, or cash on delivery.</p>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-logo">BITE</div>
+        <p class="footer-text">© 2025 BITE FOOD DELIVERY. ALL RIGHTS RESERVED.</p>
+    </footer>
+
 </body>
 </html>

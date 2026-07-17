@@ -1,151 +1,69 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Register - Food Delivery App</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .register-container {
-            background: white;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            width: 100%;
-            max-width: 440px;
-        }
-        h1 {
-            text-align: center;
-            color: #ff6b6b;
-            margin-bottom: 30px;
-            font-size: 28px;
-        }
-        .form-group {
-            margin-bottom: 18px;
-        }
-        label {
-            display: block;
-            margin-bottom: 6px;
-            color: #333;
-            font-weight: bold;
-            font-size: 14px;
-        }
-        input, textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            font-family: Arial, sans-serif;
-        }
-        textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-        input:focus, textarea:focus {
-            outline: none;
-            border-color: #ff6b6b;
-            box-shadow: 0 0 4px rgba(255, 107, 107, 0.3);
-        }
-        .btn {
-            width: 100%;
-            padding: 12px;
-            background-color: #ff6b6b;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .btn:hover {
-            background-color: #ff5252;
-        }
-        .login-link {
-            text-align: center;
-            margin-top: 20px;
-            color: #666;
-        }
-        .login-link a {
-            color: #ff6b6b;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .error {
-            background-color: #fee;
-            color: #c33;
-            padding: 12px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            border-left: 4px solid #c33;
-        }
-        .success {
-            background-color: #efe;
-            color: #3c3;
-            padding: 12px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            border-left: 4px solid #3c3;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account — BITE</title>
+    <link rel="stylesheet" href="css/impossible.css">
 </head>
 <body>
-    <div class="register-container">
-        <h1>🍕 Sign Up</h1>
 
-        <%
-            String error = (String) request.getAttribute("error");
-            String success = (String) request.getAttribute("success");
-            if (error != null) {
-        %>
-            <div class="error"><%= error %></div>
-        <% } %>
-        <% if (success != null) { %>
-            <div class="success"><%= success %></div>
-        <% } %>
+    <nav class="navbar">
+        <a href="index.jsp" class="nav-logo">BITE</a>
+        <a href="login.jsp" class="nav-welcome">← Back to Sign In</a>
+    </nav>
 
-        <form method="POST" action="UserServlet">
-            <input type="hidden" name="action" value="register">
+    <div style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 60px 24px;">
+        <div class="form-container">
+            <p class="section-bracket-eyebrow text-center">◂ Join the Club ▸</p>
+            <h1 class="form-title">SIGN<br>UP</h1>
 
-            <div class="form-group">
-                <label>Username <span style="color:#ff6b6b">*</span></label>
-                <input type="text" name="username" placeholder="Choose a username" required minlength="3" maxlength="50">
-            </div>
+            <%
+                String error = (String) request.getAttribute("error");
+                if (error != null) {
+            %>
+                <div class="alert-error"><%= error %></div>
+            <%
+                }
+            %>
 
-            <div class="form-group">
-                <label>Email Address <span style="color:#ff6b6b">*</span></label>
-                <input type="email" name="email" placeholder="Enter your email" required>
-            </div>
+            <form method="POST" action="UserServlet">
+                <input type="hidden" name="action" value="register">
 
-            <div class="form-group">
-                <label>Password <span style="color:#ff6b6b">*</span></label>
-                <input type="password" name="password" placeholder="Create a password" required minlength="6">
-            </div>
+                <div class="form-group">
+                    <label class="form-label" for="username">Username</label>
+                    <input class="form-input" type="text" id="username" name="username" required>
+                </div>
 
-            <div class="form-group">
-                <label>Delivery Address</label>
-                <textarea name="address" placeholder="Enter your default delivery address (optional)"></textarea>
-            </div>
+                <div class="form-group">
+                    <label class="form-label" for="email">Email Address</label>
+                    <input class="form-input" type="email" id="email" name="email" required>
+                </div>
 
-            <button type="submit" class="btn">Create Account</button>
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input class="form-input" type="password" id="password" name="password" required>
+                </div>
 
-            <div class="login-link">
-                Already have an account? <a href="login.jsp">Login here</a>
-            </div>
-        </form>
+                <div class="form-group">
+                    <label class="form-label" for="role">Account Type</label>
+                    <select class="form-input" id="role" name="role">
+                        <option value="CUSTOMER">Customer</option>
+                        <option value="RESTAURANT_OWNER">Restaurant Owner</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%;">Create Account ›</button>
+            </form>
+        </div>
     </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-logo">BITE</div>
+        <p class="footer-text">© 2025 BITE FOOD DELIVERY. ALL RIGHTS RESERVED.</p>
+    </footer>
+
 </body>
 </html>
